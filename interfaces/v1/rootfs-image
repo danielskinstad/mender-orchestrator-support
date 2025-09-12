@@ -100,10 +100,9 @@ case "$STATE" in
 
     Provides)
         mender-update show-provides
-        # Also submit device_type, which is in a separate file, not in the database. We don't know if the
-        # file contains a newline, so it's important that this is done last, to avoid corrupting other
-        # entries.
-        grep '^device_type=' ${MENDER_DATASTORE_DIR:-/var/lib/mender}/device_type
+        # Also submit system_type, which is stored in the topology, not in the database
+        system_type=$(sed -Ene '/^system_type:/ { s/^system_type: *"?//; s/"? *$//; p; };' "${MENDER_ORCHESTRATOR_TOPOLOGY_DIR:-/var/lib/mender-orchestrator}/topology.yaml")
+        echo "device_type=$system_type"
         ;;
 
     Inventory)
